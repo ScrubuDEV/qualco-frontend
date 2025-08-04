@@ -1,0 +1,231 @@
+<div class="bg-white border-t border-gray-200">
+  <div class="flex flex-col space-y-3 p-4 sm:hidden">
+    <div class="flex items-center justify-between text-sm">
+      <div class="flex items-center space-x-2 text-gray-600">
+        <span class="font-medium">{{ startItem() }}-{{ endItem() }}</span>
+        <span>of</span>
+        <span class="font-medium">{{ config().totalElements }}</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <select
+          [value]="config().pageSize"
+          (change)="onPageSizeChange($event)"
+          class="rounded-md border border-gray-300 px-2 py-1 text-sm bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        >
+          <option *ngFor="let size of pageSizes" [value]="size">
+            {{ size }}
+          </option>
+        </select>
+        <span class="text-gray-600 text-xs">/page</span>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <button
+        (click)="onPreviousClick()"
+        [disabled]="isFirstPage()"
+        class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200"
+        [ngClass]="{
+          'text-gray-400 bg-gray-100 cursor-not-allowed': isFirstPage(),
+          'text-gray-700 bg-white border border-gray-300 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300':
+            !isFirstPage(),
+        }"
+      >
+        <svg class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fill-rule="evenodd"
+            d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08L6.23 10 11.73 5.23a.75.75 0 011.06 0z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        Previous
+      </button>
+
+      <div class="flex items-center space-x-2 text-sm">
+        <span class="text-gray-500">Page</span>
+        <span
+          class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full font-medium"
+        >
+          {{ config().currentPage + 1 }}
+        </span>
+        <span class="text-gray-500">of {{ config().totalPages }}</span>
+      </div>
+
+      <button
+        (click)="onNextClick()"
+        [disabled]="isLastPage()"
+        class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200"
+        [ngClass]="{
+          'text-gray-400 bg-gray-100 cursor-not-allowed': isLastPage(),
+          'text-gray-700 bg-white border border-gray-300 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300':
+            !isLastPage(),
+        }"
+      >
+        Next
+        <svg class="h-4 w-4 ml-2" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fill-rule="evenodd"
+            d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08L12.94 10l-4.69 4.77a.75.75 0 01-1.06-.02z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="hidden sm:flex sm:items-center sm:justify-between px-4 py-2">
+    <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-1 text-xs text-gray-600">
+        <span>{{ startItem() }}-{{ endItem() }}</span>
+        <span>of</span>
+        <span class="font-medium">{{ config().totalElements }}</span>
+      </div>
+
+      <div class="flex items-center space-x-1 text-xs">
+        <select
+          id="pageSize"
+          [value]="config().pageSize"
+          (change)="onPageSizeChange($event)"
+          class="rounded border border-gray-300 px-2 py-0.5 text-xs bg-white focus:border-blue-400 focus:outline-none"
+        >
+          <option *ngFor="let size of pageSizes" [value]="size">
+            {{ size }}
+          </option>
+        </select>
+        <span class="text-gray-500">/page</span>
+      </div>
+    </div>
+
+    <div class="flex items-center">
+      <nav
+        class="inline-flex items-center rounded border border-gray-200 overflow-hidden"
+        aria-label="Pagination"
+      >
+        <button
+          *ngIf="config().showFirstLast"
+          (click)="onFirstClick()"
+          [disabled]="isFirstPage()"
+          class="inline-flex items-center px-2 py-1 text-xs border-r border-gray-200"
+          [ngClass]="{
+            'text-gray-300 bg-gray-50 cursor-not-allowed': isFirstPage(),
+            'text-gray-600 bg-white hover:bg-gray-50 cursor-pointer':
+              !isFirstPage(),
+          }"
+          title="First page"
+        >
+          <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fill-rule="evenodd"
+              d="M15.79 14.77a.75.75 0 01-1.06-.02L11 11.168 7.27 14.75a.75.75 0 11-1.04-1.08L10.94 10 6.23 6.33a.75.75 0 111.04-1.08L11 8.832l3.73-3.582a.75.75 0 111.06 1.04L11.06 10l4.73 4.77a.75.75 0 01-.02 1.06z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <svg class="h-3 w-3 -ml-0.5" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fill-rule="evenodd"
+              d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08L6.23 10 11.73 5.23a.75.75 0 011.06 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </button>
+
+        <button
+          *ngIf="config().showPrevNext"
+          (click)="onPreviousClick()"
+          [disabled]="isFirstPage()"
+          class="inline-flex items-center px-2 py-1 text-xs border-r border-gray-200"
+          [ngClass]="{
+            'text-gray-300 bg-gray-50 cursor-not-allowed': isFirstPage(),
+            'text-gray-600 bg-white hover:bg-gray-50 cursor-pointer':
+              !isFirstPage(),
+          }"
+          title="Previous page"
+        >
+          <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fill-rule="evenodd"
+              d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08L6.23 10 11.73 5.23a.75.75 0 011.06 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </button>
+
+        <span
+          *ngIf="showStartEllipsis()"
+          class="inline-flex items-center px-2 py-1 text-xs text-gray-400 bg-gray-50 border-r border-gray-200"
+        >
+          ...
+        </span>
+
+        <button
+          *ngFor="let page of visiblePages()"
+          (click)="onPageClick(page)"
+          class="inline-flex items-center px-2 py-1 text-xs border-r border-gray-200"
+          [ngClass]="{
+            'bg-blue-500 text-white': page === config().currentPage,
+            'text-gray-700 bg-white hover:bg-gray-50 cursor-pointer':
+              page !== config().currentPage,
+          }"
+        >
+          {{ page + 1 }}
+        </button>
+
+        <span
+          *ngIf="showEndEllipsis()"
+          class="inline-flex items-center px-2 py-1 text-xs text-gray-400 bg-gray-50 border-r border-gray-200"
+        >
+          ...
+        </span>
+
+        <button
+          *ngIf="config().showPrevNext"
+          (click)="onNextClick()"
+          [disabled]="isLastPage()"
+          class="inline-flex items-center px-2 py-1 text-xs border-r border-gray-200"
+          [ngClass]="{
+            'text-gray-300 bg-gray-50 cursor-not-allowed': isLastPage(),
+            'text-gray-600 bg-white hover:bg-gray-50 cursor-pointer':
+              !isLastPage(),
+          }"
+          title="Next page"
+        >
+          <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fill-rule="evenodd"
+              d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08L12.94 10l-4.69 4.77a.75.75 0 01-1.06-.02z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </button>
+
+        <button
+          *ngIf="config().showFirstLast"
+          (click)="onLastClick()"
+          [disabled]="isLastPage()"
+          class="inline-flex items-center px-2 py-1 text-xs"
+          [ngClass]="{
+            'text-gray-300 bg-gray-50 cursor-not-allowed': isLastPage(),
+            'text-gray-600 bg-white hover:bg-gray-50 cursor-pointer':
+              !isLastPage(),
+          }"
+          title="Last page"
+        >
+          <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fill-rule="evenodd"
+              d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08L12.94 10l-4.69 4.77a.75.75 0 01-1.06-.02z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <svg class="h-3 w-3 -ml-0.5" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fill-rule="evenodd"
+              d="M4.21 5.23a.75.75 0 01.02 1.06L8.168 10l-3.938 3.71a.75.75 0 11-1.04 1.08L8.77 10 4.23 5.23a.75.75 0 011.06 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </div>
+</div>

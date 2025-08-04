@@ -1,0 +1,90 @@
+<!-- Country Languages Page -->
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="mb-6">
+      <a
+        routerLink="/countries"
+        class="inline-flex items-center text-indigo-600 hover:text-indigo-800 transition-colors"
+      >
+        ← {{ "NATIONS-countryLanguages.backToList" | translate }}
+      </a>
+    </div>
+
+    <div class="text-3xl font-bold text-gray-900 mb-8 text-center">
+      {{ "NATIONS-countryLanguages.languagesSpokenIn" | translate }}
+      {{ countryName$ | async }}
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="px-6 py-4 bg-green-600 text-white">
+        <div class="text-xl font-semibold">
+          {{ "NATIONS-countryLanguages.spokenLanguages" | translate }}
+        </div>
+        <p class="text-green-100 mt-1">
+          {{ "NATIONS-countryLanguages.countryCode" | translate }}:
+          {{ countryCode$ | async }}
+        </p>
+      </div>
+
+      <div class="p-6">
+        <!-- Loading state -->
+        <div *ngIf="loading$ | async" class="text-center py-4">
+          <div
+            class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"
+          ></div>
+          <p class="mt-2 text-gray-600">
+            {{ "NATIONS-countryLanguages.loading" | translate }}
+          </p>
+        </div>
+
+        <!-- Error state -->
+        <div
+          *ngIf="(error$ | async) && !(loading$ | async)"
+          class="text-center py-4"
+        >
+          <p class="text-red-600">{{ error$ | async }}</p>
+        </div>
+
+        <!-- Empty state -->
+        <ng-container *ngIf="languages$ | async as languages">
+          <div
+            *ngIf="
+              languages.length === 0 && !(loading$ | async) && !(error$ | async)
+            "
+            class="text-center py-4"
+          >
+            <p class="text-gray-600">
+              {{ "NATIONS-countryLanguages.noLanguagesFound" | translate }}
+            </p>
+          </div>
+
+          <!-- Languages list -->
+          <div class="grid gap-4" *ngIf="languages.length > 0">
+            <div
+              *ngFor="let language of languages"
+              class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <div class="flex-1">
+                <div class="flex items-center space-x-3">
+                  <div class="text-lg font-semibold text-gray-900">
+                    {{ language.languageName }}
+                  </div>
+                  <span
+                    *ngIf="language.official"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                  >
+                    {{ "NATIONS-countryLanguages.official" | translate }}
+                  </span>
+                </div>
+                <div class="text-sm text-gray-600 mt-1">
+                  {{ "NATIONS-countryLanguages.countryCode" | translate }}:
+                  {{ language.countryCode3 }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

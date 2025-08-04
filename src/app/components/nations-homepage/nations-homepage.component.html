@@ -1,0 +1,52 @@
+<!-- Nations Homepage -->
+<section
+  class="text-center py-12 sm:py-16 bg-gradient-to-br from-indigo-500 to-purple-600 text-white min-h-screen flex flex-col justify-center"
+>
+  <div class="w-full">
+    <div class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 px-4">
+      {{ "hero.title" | translate }}
+    </div>
+    <p
+      class="text-lg sm:text-xl mb-8 sm:mb-12 opacity-90 px-4 max-w-3xl mx-auto"
+    >
+      {{ "hero.subtitle" | translate }}
+    </p>
+
+    <div
+      class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto px-4"
+    >
+      <div
+        class="bg-white/10 p-6 sm:p-8 rounded-xl backdrop-blur border border-white/20 hover:transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
+      >
+        <div class="text-xl sm:text-2xl font-semibold mb-4 text-white">
+          {{ "features.search.title" | translate }}
+        </div>
+        <p class="text-sm sm:text-base leading-relaxed opacity-90">
+          {{ "features.search.description" | translate }}
+        </p>
+      </div>
+
+      <div
+        class="bg-white/10 p-6 sm:p-8 rounded-xl backdrop-blur border border-white/20 hover:transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
+      >
+        <div class="text-xl sm:text-2xl font-semibold mb-4 text-white">
+          {{ "features.details.title" | translate }}
+        </div>
+        <p class="text-sm sm:text-base leading-relaxed opacity-90">
+          {{ "features.details.description" | translate }}
+        </p>
+      </div>
+
+      <div
+        class="bg-white/10 p-6 sm:p-8 rounded-xl backdrop-blur border border-white/20 hover:transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
+      >
+        <div class="text-xl sm:text-2xl font-semibold mb-4 text-white">
+          {{ "features.compare.title" | translate }}
+        </div>
+        <p class="text-sm sm:text-base leading-relaxed opacity-90">
+          {{ "features.compare.description" | translate }}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslatePipe } from '../../pipes/translate.pipe';
 import { Store } from '@ngrx/store';
 import { CountryStats } from '../../shared/models/country.models';
 import { Observable, Subject, combineLatest } from 'rxjs';
@@ -16,6 +15,7 @@ import {
   PaginationComponent,
   PaginationConfig,
 } from '../../shared/components/pagination/pagination.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-countries-stats',
@@ -41,10 +41,7 @@ export class CountriesStatsComponent implements OnInit, OnDestroy {
     const pageSize$ = this.store.select(selectCountryStatsPageSize);
 
     combineLatest([page$, pageSize$])
-      .pipe(
-        takeUntil(this.destroy$),
-        take(1),
-      )
+      .pipe(takeUntil(this.destroy$), take(1))
       .subscribe(([page, size]: [number, number]) => {
         this.store.dispatch(
           CountriesActions.loadCountryStats({

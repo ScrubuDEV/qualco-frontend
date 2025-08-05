@@ -4,7 +4,6 @@ import { Store } from '@ngrx/store';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { take, takeUntil, map } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { TranslatePipe } from '../../pipes/translate.pipe';
 import {
   CountryDto,
   CountryLanguage,
@@ -19,11 +18,12 @@ import * as CountriesSelectors from '../../shared/store/countries.selectors';
 import { PaginationService } from '../../shared/services/pagination.service';
 import { NationsService } from '../../shared/services/nations.service';
 import { CommonModule } from '@angular/common';
+import { TranslateDirective, TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-countries-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, PaginationComponent, TranslatePipe],
+  imports: [CommonModule, RouterModule, PaginationComponent,TranslatePipe],
   templateUrl: './countries-list.component.html',
   styleUrl: './countries-list.component.scss',
 })
@@ -50,6 +50,7 @@ export class CountriesListComponent implements OnInit, OnDestroy {
     private router: Router,
     private nationsService: NationsService,
     private paginationService: PaginationService,
+    translate: TranslateService,
   ) {
     this.viewModelSignal = toSignal(
       this.store.select(CountriesSelectors.selectCountriesListViewModel),
@@ -64,13 +65,14 @@ export class CountriesListComponent implements OnInit, OnDestroy {
     this.isReady = computed(() => !this.loading() && !this.hasError());
 
     // Initialize pagination helper
-    this.paginationHelper = this.paginationService.createPaginationHelper<CountryDto>({
-      selector: CountriesSelectors.selectCountriesListViewModel,
-      actions: {
-        setPage: (page: number) => CountriesActions.setCurrentPage({ page }),
-        setPageSize: (size: number) => CountriesActions.setPageSize({ size }),
-      },
-    });
+    this.paginationHelper =
+      this.paginationService.createPaginationHelper<CountryDto>({
+        selector: CountriesSelectors.selectCountriesListViewModel,
+        actions: {
+          setPage: (page: number) => CountriesActions.setCurrentPage({ page }),
+          setPageSize: (size: number) => CountriesActions.setPageSize({ size }),
+        },
+      });
 
     // Create signals from pagination helper observables
     this.paginationConfig = toSignal(this.paginationHelper.paginationConfig$, {

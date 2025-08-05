@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '../../pipes/translate.pipe';
 import { NationsService } from '../../shared/services/nations.service';
 import { CountrySearchData } from '../../shared/models/country.models';
 import {
   PaginationComponent,
   PaginationConfig,
 } from '../../shared/components/pagination/pagination.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-countries-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, TranslatePipe],
   templateUrl: './countries-search.component.html',
   styleUrl: './countries-search.component.scss',
 })

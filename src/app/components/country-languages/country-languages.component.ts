@@ -4,10 +4,10 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { CountryDto, LanguageDto } from '../../shared/models/country.models';
 import { Observable, Subject, takeUntil, map, BehaviorSubject, catchError, combineLatest, filter, of, switchMap, tap } from 'rxjs';
-import { TranslatePipe } from '../../pipes/translate.pipe';
 import * as CountriesActions from '../../shared/store/countries.actions';
 import * as fromCountries from '../../shared/store/countries.selectors';
 import { NationsService } from '../../shared/services/nations.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-country-languages',

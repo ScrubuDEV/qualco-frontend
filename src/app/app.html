@@ -51,14 +51,14 @@
       <div class="language-toggle flex gap-2">
         <button
           class="px-3 py-1 rounded border border-white/30 hover:bg-white/10 transition-colors font-medium text-sm"
-          [ngClass]="{ 'bg-white/20': currentLang() === 'en' }"
+          [ngClass]="{ 'bg-white/20': getTranslation() === 'en' }"
           (click)="switchLanguage('en')"
         >
           {{ "NATIONS-language.english" | translate }}
         </button>
         <button
           class="px-3 py-1 rounded border border-white/30 hover:bg-white/10 transition-colors font-medium text-sm"
-          [ngClass]="{ 'bg-white/20': currentLang() === 'fr' }"
+          [ngClass]="{ 'bg-white/20': getTranslation() === 'fr' }"
           (click)="switchLanguage('fr')"
         >
           {{ "NATIONS-language.french" | translate }}

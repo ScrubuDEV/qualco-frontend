@@ -12,6 +12,8 @@ import { countriesReducer } from './shared/store/countries.reducer';
 import { CountriesEffects } from './shared/store/countries.effects';
 
 import { routes } from './app.routes';
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,6 +21,13 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes),
     provideHttpClient(),
+    provideTranslateService({
+      loader: provideTranslateHttpLoader({
+        prefix: './assets/i18n/',
+        suffix: '.json',
+      }),
+      fallbackLang: 'en',
+    }),
     provideStore({ countries: countriesReducer }),
     provideEffects([CountriesEffects]),
     provideStoreDevtools({

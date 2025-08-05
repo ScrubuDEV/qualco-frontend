@@ -11,7 +11,7 @@
           {{ "NATIONS-countries.list.subtitle" | translate }}
         </div>
         <p class="text-indigo-100 mt-1" *ngIf="hasCountries()">
-{{ "NATIONS-countries.list.found" | translate:{ count: totalCountries() } }}
+          {{ "NATIONS-countries.list.found" | translate: {count: totalCountries() } }}
         </p>
         <p class="text-indigo-100 mt-1" *ngIf="!hasCountries() && isReady()">
           {{ "NATIONS-countries.list.noCountries" | translate }}

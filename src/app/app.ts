@@ -1,8 +1,7 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { TranslationService } from './services/translation.service';
-import { TranslatePipe } from './pipes/translate.pipe';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -13,21 +12,21 @@ import { TranslatePipe } from './pipes/translate.pipe';
 export class App implements OnInit {
   protected readonly title = signal('nations-frontend');
 
-  private translationService = inject(TranslationService);
+  private translate = inject(TranslateService);
 
-  currentLang = signal<string>('en');
 
-  ngOnInit() {
-    this.translationService.currentLang$.subscribe((lang) => {
-      this.currentLang.set(lang);
-    });
+  constructor() {
+    this.translate.setFallbackLang('en');
+    this.translate.use('en');
+  }
+  ngOnInit(): void {
   }
 
   switchLanguage(lang: string): void {
-    this.translationService.setLanguage(lang);
+    this.translate.use(lang);
   }
 
-  getTranslation(key: string): string {
-    return this.translationService.getTranslation(key);
+  getTranslation(): string {
+    return this.translate.getCurrentLang();
   }
 }

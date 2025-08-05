@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-nations-homepage',
@@ -9,4 +9,9 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
   templateUrl: './nations-homepage.component.html',
   styleUrl: './nations-homepage.component.scss',
 })
-export class NationsHomepageComponent {}
+export class NationsHomepageComponent {
+
+  constructor(translate: TranslateService) {
+
+  }
+}

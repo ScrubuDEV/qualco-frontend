@@ -1,3 +1,48 @@
+export type CountryStatsOverviewListViewModel = {
+  items: CountryStatsOverviewDto[];
+  loading: boolean;
+  error: string | null;
+  hasItems: boolean;
+  itemCount: number;
+  hasError: boolean;
+  isReady: boolean;
+  paginationConfig: {
+    currentPage: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+    showFirstLast: boolean;
+    showPrevNext: boolean;
+    maxVisiblePages: number;
+  };
+};
+export interface CountryStatsOverviewState {
+  data: CountryStatsOverviewDto[];
+  loading: boolean;
+  error: string | null;
+  pagination: {
+    currentPage: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+  };
+  filters: CountryStatsOverviewFilters;
+}
+
+export type CountryStatsOverviewFilters = {
+  regionId?: number;
+  yearFrom?: number;
+  yearTo?: number;
+  continentName?: string;
+  regionName?: string;
+  countryName?: string;
+  year?: string;
+  sortDirection?: string;
+  sortBy?: string;
+  direction?: 'asc' | 'desc';
+  population?: string;
+  gdp?: string;
+};
 export interface CountryDto {
   id?: number;
   name: string;
@@ -44,22 +89,6 @@ export interface Page<T> {
   empty: boolean;
 }
 
-export interface CountryLanguage {
-  countryId: number;
-  languageId: number;
-  official: boolean;
-  country?: {
-    id: number;
-    name: string;
-    countryCode2: string;
-  };
-  language?: {
-    id: number;
-    name: string;
-    nativeName?: string;
-  };
-}
-
 export interface CountryStats {
   countryName: string;
   countryCode2: string;
@@ -71,6 +100,25 @@ export interface CountryStats {
 }
 
 export interface CountrySearchData {
+  continentName: string;
+  regionName: string;
+  countryName: string;
+  year: number;
+  population: number;
+  gdp: number;
+}
+
+export interface RegionDto {
+  id: number;
+  name: string;
+}
+
+export interface YearRange {
+  minYear: number;
+  maxYear: number;
+}
+
+export interface CountryStatsOverviewDto {
   continentName: string;
   regionName: string;
   countryName: string;

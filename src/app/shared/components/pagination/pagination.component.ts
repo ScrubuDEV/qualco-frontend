@@ -1,6 +1,5 @@
 import {
   Component,
-  Input,
   Output,
   EventEmitter,
   computed,
@@ -31,7 +30,7 @@ export class PaginationComponent {
     currentPage: 0,
     totalPages: 0,
     totalElements: 0,
-    pageSize: 20, // Match the initial store state
+    pageSize: 20,
     showFirstLast: true,
     showPrevNext: true,
     maxVisiblePages: 3,
@@ -51,22 +50,18 @@ export class PaginationComponent {
     }
 
     if (totalPages <= maxVisiblePages) {
-      // Show all pages if total is less than max visible
       for (let i = 0; i < totalPages; i++) {
         pages.push(i);
       }
     } else {
-      // Calculate start and end pages with better logic
       const half = Math.floor(maxVisiblePages / 2);
       let startPage = Math.max(0, currentPage - half);
       let endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1);
 
-      // Adjust if we're near the end
       if (endPage === totalPages - 1) {
         startPage = Math.max(0, endPage - maxVisiblePages + 1);
       }
 
-      // Adjust if we're near the beginning
       if (startPage === 0) {
         endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1);
       }
@@ -79,7 +74,6 @@ export class PaginationComponent {
     return pages;
   });
 
-  // Updated ellipsis logic - only show if there's a gap of more than 1 page
   showStartEllipsis = computed(() => {
     const visiblePages = this.visiblePages();
     return visiblePages.length > 0 && visiblePages[0] > 1;

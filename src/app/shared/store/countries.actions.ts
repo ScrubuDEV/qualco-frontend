@@ -4,6 +4,9 @@ import {
   LanguageDto,
   Page,
   CountryStats,
+  RegionDto,
+  YearRange,
+  CountryStatsOverviewDto,
 } from '../models/country.models';
 
 export const LOAD_COUNTRIES = '[Countries] Load Countries';
@@ -18,7 +21,6 @@ export const CLEAR_FILTERS = '[Countries] Clear Filters';
 export const CLEAR_COUNTRIES = '[Countries] Clear Countries';
 export const RESET_ERROR = '[Countries] Reset Error';
 
-// New language-related actions
 export const LOAD_COUNTRY_LANGUAGES = '[Countries] Load Country Languages';
 export const LOAD_COUNTRY_LANGUAGES_SUCCESS =
   '[Countries] Load Country Languages Success';
@@ -27,7 +29,6 @@ export const LOAD_COUNTRY_LANGUAGES_FAILURE =
 export const CLEAR_COUNTRY_LANGUAGES = '[Countries] Clear Country Languages';
 export const SET_SELECTED_COUNTRY = '[Countries] Set Selected Country';
 
-// Country stats-related actions
 export const LOAD_COUNTRY_STATS = '[Countries] Load Country Stats';
 export const LOAD_COUNTRY_STATS_SUCCESS =
   '[Countries] Load Country Stats Success';
@@ -37,235 +38,219 @@ export const SET_COUNTRY_STATS_PAGE = '[Countries] Set Country Stats Page';
 export const SET_COUNTRY_STATS_PAGE_SIZE =
   '[Countries] Set Country Stats Page Size';
 export const CLEAR_COUNTRY_STATS = '[Countries] Clear Country Stats';
-
-export const ACTION_LOG_MESSAGES = {
-  LOAD_COUNTRIES_START: 'Starting to load countries with pagination',
-  LOAD_COUNTRIES_SUCCESS: 'Successfully loaded countries from API',
-  LOAD_COUNTRIES_FAILURE: 'Failed to load countries from API',
-  SET_CURRENT_PAGE_START: 'Updating current page number',
-  SET_PAGE_SIZE_START: 'Updating page size configuration',
-  RESET_PAGINATION_START: 'Resetting pagination to initial state',
-  INITIALIZE_PAGINATION_START:
-    'Initializing pagination with dynamic parameters',
-  SET_FILTERS_START: 'Applying new filters to countries list',
-  CLEAR_FILTERS_START: 'Clearing all applied filters',
-  CLEAR_COUNTRIES_START: 'Clearing countries data from state',
-  RESET_ERROR_START: 'Resetting error state',
-  // New language-related log messages
-  LOAD_COUNTRY_LANGUAGES_START: 'Starting to load languages for country',
-  LOAD_COUNTRY_LANGUAGES_SUCCESS: 'Successfully loaded languages for country',
-  LOAD_COUNTRY_LANGUAGES_FAILURE: 'Failed to load languages for country',
-  CLEAR_COUNTRY_LANGUAGES_START: 'Clearing country languages data',
-  SET_SELECTED_COUNTRY_START: 'Setting selected country',
-  // Country stats-related log messages
-  LOAD_COUNTRY_STATS_START:
-    'Starting to load country statistics with pagination',
-  LOAD_COUNTRY_STATS_SUCCESS: 'Successfully loaded country statistics from API',
-  LOAD_COUNTRY_STATS_FAILURE: 'Failed to load country statistics from API',
-  SET_COUNTRY_STATS_PAGE_START: 'Updating country stats page number',
-  SET_COUNTRY_STATS_PAGE_SIZE_START:
-    'Updating country stats page size configuration',
-  CLEAR_COUNTRY_STATS_START: 'Clearing country statistics data',
-} as const;
-
-export const ACTION_ERROR_MESSAGES = {
-  LOAD_COUNTRIES_FAILURE: 'Error occurred while loading countries',
-  NETWORK_ERROR: 'Network connection error while fetching countries',
-  SERVER_ERROR: 'Server error occurred during countries operation',
-  VALIDATION_ERROR: 'Validation error in countries request',
-  TIMEOUT_ERROR: 'Request timeout while loading countries',
-  // New language-related error messages
-  LOAD_COUNTRY_LANGUAGES_FAILURE:
-    'Error occurred while loading country languages',
-  // Country stats-related error messages
-  LOAD_COUNTRY_STATS_FAILURE: 'Error occurred while loading country statistics',
-} as const;
+export const LOAD_REGIONS = '[ManagementInfo] Load Regions';
+export const LOAD_REGIONS_SUCCESS = '[ManagementInfo] Load Regions Success';
+export const LOAD_REGIONS_FAILURE = '[ManagementInfo] Load Regions Failure';
+export const LOAD_YEAR_RANGE = '[ManagementInfo] Load Year Range';
+export const LOAD_YEAR_RANGE_SUCCESS =
+  '[ManagementInfo] Load Year Range Success';
+export const LOAD_YEAR_RANGE_FAILURE =
+  '[ManagementInfo] Load Year Range Failure';
+export const LOAD_COUNTRY_STATS_OVERVIEW =
+  '[Countries] Load Country Stats Overview';
+export const LOAD_COUNTRY_STATS_OVERVIEW_SUCCESS =
+  '[Countries] Load Country Stats Overview Success';
+export const LOAD_COUNTRY_STATS_OVERVIEW_FAILURE =
+  '[Countries] Load Country Stats Overview Failure';
+export const SET_COUNTRY_STATS_OVERVIEW_PAGE =
+  '[Countries] Set Country Stats Overview Page';
+export const SET_COUNTRY_STATS_OVERVIEW_PAGE_SIZE =
+  '[Countries] Set Country Stats Overview Page Size';
+export const SET_COUNTRY_STATS_OVERVIEW_FILTERS =
+  '[Countries] Set Country Stats Overview Filters';
+export const CLEAR_COUNTRY_STATS_OVERVIEW =
+  '[Countries] Clear Country Stats Overview';
 
 export class LoadCountriesAction implements Action {
   readonly type = LOAD_COUNTRIES;
 
-  constructor(public payload: { page: number; size: number; filters?: any }) {
-    console.log(ACTION_LOG_MESSAGES.LOAD_COUNTRIES_START, this.payload);
-  }
+  constructor(public payload: { page: number; size: number; filters?: any }) {}
 }
 
 export class LoadCountriesSuccessAction implements Action {
   readonly type = LOAD_COUNTRIES_SUCCESS;
 
-  constructor(public payload: { response: Page<CountryDto> }) {
-    console.log(ACTION_LOG_MESSAGES.LOAD_COUNTRIES_SUCCESS, this.payload);
-  }
+  constructor(public payload: { response: Page<CountryDto> }) {}
 }
 
 export class LoadCountriesFailureAction implements Action {
   readonly type = LOAD_COUNTRIES_FAILURE;
 
-  constructor(public payload: { error: string }) {
-    console.error(ACTION_LOG_MESSAGES.LOAD_COUNTRIES_FAILURE, this.payload);
-  }
+  constructor(public payload: { error: string }) {}
 }
 
 export class SetCurrentPageAction implements Action {
   readonly type = SET_CURRENT_PAGE;
 
-  constructor(public payload: { page: number }) {
-    console.log(ACTION_LOG_MESSAGES.SET_CURRENT_PAGE_START, this.payload);
-  }
+  constructor(public payload: { page: number }) {}
 }
 
 export class SetPageSizeAction implements Action {
   readonly type = SET_PAGE_SIZE;
 
-  constructor(public payload: { size: number }) {
-    console.log(ACTION_LOG_MESSAGES.SET_PAGE_SIZE_START, this.payload);
-  }
+  constructor(public payload: { size: number }) {}
 }
 
 export class ResetPaginationAction implements Action {
   readonly type = RESET_PAGINATION;
 
-  constructor() {
-    console.log(ACTION_LOG_MESSAGES.RESET_PAGINATION_START);
-  }
+  constructor() {}
 }
 
 export class InitializePaginationAction implements Action {
   readonly type = INITIALIZE_PAGINATION;
 
-  constructor(public payload: { page: number; size: number }) {
-    console.log(ACTION_LOG_MESSAGES.INITIALIZE_PAGINATION_START, this.payload);
-  }
+  constructor(public payload: { page: number; size: number }) {}
 }
 
 export class SetFiltersAction implements Action {
   readonly type = SET_FILTERS;
 
-  constructor(public payload: { filters: any }) {
-    console.log(ACTION_LOG_MESSAGES.SET_FILTERS_START, this.payload);
-  }
+  constructor(public payload: { filters: any }) {}
 }
 
 export class ClearFiltersAction implements Action {
   readonly type = CLEAR_FILTERS;
 
-  constructor() {
-    console.log(ACTION_LOG_MESSAGES.CLEAR_FILTERS_START);
-  }
+  constructor() {}
 }
 
 export class ClearCountriesAction implements Action {
   readonly type = CLEAR_COUNTRIES;
 
-  constructor() {
-    console.log(ACTION_LOG_MESSAGES.CLEAR_COUNTRIES_START);
-  }
+  constructor() {}
 }
 
 export class ResetErrorAction implements Action {
   readonly type = RESET_ERROR;
 
-  constructor() {
-    console.log(ACTION_LOG_MESSAGES.RESET_ERROR_START);
-  }
+  constructor() {}
 }
 
 // New language-related action classes
 export class LoadCountryLanguagesAction implements Action {
   readonly type = LOAD_COUNTRY_LANGUAGES;
 
-  constructor(public payload: { countryId: number }) {
-    console.log(ACTION_LOG_MESSAGES.LOAD_COUNTRY_LANGUAGES_START, this.payload);
-  }
+  constructor(public payload: { countryId: number }) {}
 }
 
 export class LoadCountryLanguagesSuccessAction implements Action {
   readonly type = LOAD_COUNTRY_LANGUAGES_SUCCESS;
 
-  constructor(public payload: { languages: LanguageDto[] }) {
-    console.log(
-      ACTION_LOG_MESSAGES.LOAD_COUNTRY_LANGUAGES_SUCCESS,
-      this.payload,
-    );
-  }
+  constructor(public payload: { languages: LanguageDto[] }) {}
 }
 
 export class LoadCountryLanguagesFailureAction implements Action {
   readonly type = LOAD_COUNTRY_LANGUAGES_FAILURE;
 
-  constructor(public payload: { error: string }) {
-    console.error(
-      ACTION_LOG_MESSAGES.LOAD_COUNTRY_LANGUAGES_FAILURE,
-      this.payload,
-    );
-  }
+  constructor(public payload: { error: string }) {}
 }
 
 export class ClearCountryLanguagesAction implements Action {
   readonly type = CLEAR_COUNTRY_LANGUAGES;
 
-  constructor() {
-    console.log(ACTION_LOG_MESSAGES.CLEAR_COUNTRY_LANGUAGES_START);
-  }
+  constructor() {}
 }
 
 export class SetSelectedCountryAction implements Action {
   readonly type = SET_SELECTED_COUNTRY;
 
-  constructor(public payload: { country: CountryDto }) {
-    console.log(ACTION_LOG_MESSAGES.SET_SELECTED_COUNTRY_START, this.payload);
-  }
+  constructor(public payload: { country: CountryDto }) {}
 }
 
-// Country stats action classes
 export class LoadCountryStatsAction implements Action {
   readonly type = LOAD_COUNTRY_STATS;
 
-  constructor(public payload: { page: number; size: number }) {
-    console.log(ACTION_LOG_MESSAGES.LOAD_COUNTRY_STATS_START, this.payload);
-  }
+  constructor(public payload: { page: number; size: number }) {}
 }
 
 export class LoadCountryStatsSuccessAction implements Action {
   readonly type = LOAD_COUNTRY_STATS_SUCCESS;
 
-  constructor(public payload: { response: Page<CountryStats> }) {
-    console.log(ACTION_LOG_MESSAGES.LOAD_COUNTRY_STATS_SUCCESS, this.payload);
-  }
+  constructor(public payload: { response: Page<CountryStats> }) {}
 }
 
 export class LoadCountryStatsFailureAction implements Action {
   readonly type = LOAD_COUNTRY_STATS_FAILURE;
 
-  constructor(public payload: { error: string }) {
-    console.error(ACTION_LOG_MESSAGES.LOAD_COUNTRY_STATS_FAILURE, this.payload);
-  }
+  constructor(public payload: { error: string }) {}
 }
 
 export class SetCountryStatsPageAction implements Action {
   readonly type = SET_COUNTRY_STATS_PAGE;
 
-  constructor(public payload: { page: number }) {
-    console.log(ACTION_LOG_MESSAGES.SET_COUNTRY_STATS_PAGE_START, this.payload);
-  }
+  constructor(public payload: { page: number }) {}
 }
 
 export class SetCountryStatsPageSizeAction implements Action {
   readonly type = SET_COUNTRY_STATS_PAGE_SIZE;
 
-  constructor(public payload: { size: number }) {
-    console.log(
-      ACTION_LOG_MESSAGES.SET_COUNTRY_STATS_PAGE_SIZE_START,
-      this.payload,
-    );
-  }
+  constructor(public payload: { size: number }) {}
 }
 
 export class ClearCountryStatsAction implements Action {
   readonly type = CLEAR_COUNTRY_STATS;
 
-  constructor() {
-    console.log(ACTION_LOG_MESSAGES.CLEAR_COUNTRY_STATS_START);
-  }
+  constructor() {}
+}
+
+export class LoadRegionsAction implements Action {
+  readonly type = LOAD_REGIONS;
+  constructor() {}
+}
+
+export class LoadRegionsSuccessAction implements Action {
+  readonly type = LOAD_REGIONS_SUCCESS;
+  constructor(public payload: { regions: RegionDto[] }) {}
+}
+
+export class LoadRegionsFailureAction implements Action {
+  readonly type = LOAD_REGIONS_FAILURE;
+  constructor(public payload: { error: string }) {}
+}
+
+export class LoadYearRangeAction implements Action {
+  readonly type = LOAD_YEAR_RANGE;
+  constructor() {}
+}
+
+export class LoadYearRangeSuccessAction implements Action {
+  readonly type = LOAD_YEAR_RANGE_SUCCESS;
+  constructor(public payload: { yearRange: YearRange }) {}
+}
+
+export class LoadYearRangeFailureAction implements Action {
+  readonly type = LOAD_YEAR_RANGE_FAILURE;
+  constructor(public payload: { error: string }) {}
+}
+
+export class LoadCountryStatsOverviewAction implements Action {
+  readonly type = LOAD_COUNTRY_STATS_OVERVIEW;
+  constructor(public payload: { page: number; size: number; filters?: any }) {}
+}
+export class LoadCountryStatsOverviewSuccessAction implements Action {
+  readonly type = LOAD_COUNTRY_STATS_OVERVIEW_SUCCESS;
+  constructor(public payload: { response: Page<CountryStatsOverviewDto> }) {}
+}
+export class LoadCountryStatsOverviewFailureAction implements Action {
+  readonly type = LOAD_COUNTRY_STATS_OVERVIEW_FAILURE;
+  constructor(public payload: { error: string }) {}
+}
+export class SetCountryStatsOverviewPageAction implements Action {
+  readonly type = SET_COUNTRY_STATS_OVERVIEW_PAGE;
+  constructor(public payload: { page: number }) {}
+}
+export class SetCountryStatsOverviewPageSizeAction implements Action {
+  readonly type = SET_COUNTRY_STATS_OVERVIEW_PAGE_SIZE;
+  constructor(public payload: { size: number }) {}
+}
+export class SetCountryStatsOverviewFiltersAction implements Action {
+  readonly type = SET_COUNTRY_STATS_OVERVIEW_FILTERS;
+  constructor(public payload: { filters: any }) {}
+}
+export class ClearCountryStatsOverviewAction implements Action {
+  readonly type = CLEAR_COUNTRY_STATS_OVERVIEW;
+  constructor() {}
 }
 
 export type CountriesActions =
@@ -324,7 +309,6 @@ export const clearCountries = () => new ClearCountriesAction();
 
 export const resetError = () => new ResetErrorAction();
 
-// New language-related action creators
 export const loadCountryLanguages = (payload: { countryId: number }) =>
   new LoadCountryLanguagesAction(payload);
 
@@ -340,7 +324,6 @@ export const clearCountryLanguages = () => new ClearCountryLanguagesAction();
 export const setSelectedCountry = (payload: { country: CountryDto }) =>
   new SetSelectedCountryAction(payload);
 
-// Country stats action creators
 export const loadCountryStats = (payload: { page: number; size: number }) =>
   new LoadCountryStatsAction(payload);
 
@@ -358,3 +341,44 @@ export const setCountryStatsPageSize = (payload: { size: number }) =>
   new SetCountryStatsPageSizeAction(payload);
 
 export const clearCountryStats = () => new ClearCountryStatsAction();
+
+export const loadRegions = () => new LoadRegionsAction();
+
+export const loadRegionsSuccess = (payload: { regions: RegionDto[] }) =>
+  new LoadRegionsSuccessAction(payload);
+
+export const loadRegionsFailure = (payload: { error: string }) =>
+  new LoadRegionsFailureAction(payload);
+
+export const loadYearRange = () => new LoadYearRangeAction();
+
+export const loadYearRangeSuccess = (payload: { yearRange: YearRange }) =>
+  new LoadYearRangeSuccessAction(payload);
+
+export const loadYearRangeFailure = (payload: { error: string }) =>
+  new LoadYearRangeFailureAction(payload);
+
+export const loadCountryStatsOverview = (payload: {
+  page: number;
+  size: number;
+  filters?: any;
+}) => new LoadCountryStatsOverviewAction(payload);
+
+export const loadCountryStatsOverviewSuccess = (payload: {
+  response: Page<CountryStatsOverviewDto>;
+}) => new LoadCountryStatsOverviewSuccessAction(payload);
+
+export const loadCountryStatsOverviewFailure = (payload: { error: string }) =>
+  new LoadCountryStatsOverviewFailureAction(payload);
+
+export const setCountryStatsOverviewPage = (payload: { page: number }) =>
+  new SetCountryStatsOverviewPageAction(payload);
+
+export const setCountryStatsOverviewPageSize = (payload: { size: number }) =>
+  new SetCountryStatsOverviewPageSizeAction(payload);
+
+export const setCountryStatsOverviewFilters = (payload: { filters: any }) =>
+  new SetCountryStatsOverviewFiltersAction(payload);
+
+export const clearCountryStatsOverview = () =>
+  new ClearCountryStatsOverviewAction();

@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between text-sm">
       <div class="flex items-center space-x-2 text-gray-600">
         <span class="font-medium">{{ startItem() }}-{{ endItem() }}</span>
-        <span>of</span>
+        <span>{{ "NATIONS-pagination.of" | translate }}</span>
         <span class="font-medium">{{ config().totalElements }}</span>
       </div>
       <div class="flex items-center space-x-2">
@@ -16,7 +16,9 @@
             {{ size }}
           </option>
         </select>
-        <span class="text-gray-600 text-xs">/page</span>
+        <span class="text-gray-600 text-xs">{{
+          "NATIONS-pagination.perPage" | translate
+        }}</span>
       </div>
     </div>
 
@@ -38,17 +40,22 @@
             clip-rule="evenodd"
           />
         </svg>
-        Previous
+        {{ "NATIONS-pagination.previous.short" | translate }}
       </button>
 
       <div class="flex items-center space-x-2 text-sm">
-        <span class="text-gray-500">Page</span>
+        <span class="text-gray-500">{{
+          "NATIONS-pagination.page" | translate
+        }}</span>
         <span
           class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full font-medium"
         >
           {{ config().currentPage + 1 }}
         </span>
-        <span class="text-gray-500">of {{ config().totalPages }}</span>
+        <span class="text-gray-500"
+          >{{ "NATIONS-pagination.of" | translate }}
+          {{ config().totalPages }}</span
+        >
       </div>
 
       <button
@@ -61,7 +68,7 @@
             !isLastPage(),
         }"
       >
-        Next
+        {{ "NATIONS-pagination.next.short" | translate }}
         <svg class="h-4 w-4 ml-2" viewBox="0 0 20 20" fill="currentColor">
           <path
             fill-rule="evenodd"
@@ -77,7 +84,7 @@
     <div class="flex items-center space-x-3">
       <div class="flex items-center space-x-1 text-xs text-gray-600">
         <span>{{ startItem() }}-{{ endItem() }}</span>
-        <span>of</span>
+        <span>{{ "NATIONS-pagination.of" | translate }}</span>
         <span class="font-medium">{{ config().totalElements }}</span>
       </div>
 
@@ -92,7 +99,9 @@
             {{ size }}
           </option>
         </select>
-        <span class="text-gray-500">/page</span>
+        <span class="text-gray-500">{{
+          "NATIONS-pagination.perPage" | translate
+        }}</span>
       </div>
     </div>
 
@@ -111,7 +120,7 @@
             'text-gray-600 bg-white hover:bg-gray-50 cursor-pointer':
               !isFirstPage(),
           }"
-          title="First page"
+          [title]="'NATIONS-pagination.first' | translate"
         >
           <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
             <path
@@ -139,7 +148,7 @@
             'text-gray-600 bg-white hover:bg-gray-50 cursor-pointer':
               !isFirstPage(),
           }"
-          title="Previous page"
+          [title]="'NATIONS-pagination.previous' | translate"
         >
           <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
             <path
@@ -187,7 +196,7 @@
             'text-gray-600 bg-white hover:bg-gray-50 cursor-pointer':
               !isLastPage(),
           }"
-          title="Next page"
+          [title]="'NATIONS-pagination.next' | translate"
         >
           <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
             <path
@@ -208,7 +217,7 @@
             'text-gray-600 bg-white hover:bg-gray-50 cursor-pointer':
               !isLastPage(),
           }"
-          title="Last page"
+          [title]="'NATIONS-pagination.last' | translate"
         >
           <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
             <path

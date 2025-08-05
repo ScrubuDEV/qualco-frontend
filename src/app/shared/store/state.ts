@@ -2,7 +2,15 @@ import {
   CountryDto,
   LanguageDto,
   CountryStats,
+  RegionDto,
+  YearRange,
+  CountryStatsOverviewDto,
+  CountryStatsOverviewState,
 } from '../models/country.models';
+export interface ManagementInfoState extends LoadingState {
+  regions: RegionDto[];
+  yearRange: YearRange | null;
+}
 
 export interface PaginationState {
   currentPage: number;
@@ -11,10 +19,13 @@ export interface PaginationState {
   totalPages: number;
 }
 
-export interface CountriesState {
-  countries: CountryDto[];
+export interface LoadingState {
   loading: boolean;
   error: string | null;
+}
+
+export interface CountriesListState extends LoadingState {
+  data: CountryDto[];
   pagination: PaginationState;
   filters: {
     region?: string;
@@ -22,41 +33,73 @@ export interface CountriesState {
     yearFrom?: number;
     yearTo?: number;
   };
+}
+
+export interface CountryLanguagesState extends LoadingState {
+  data: LanguageDto[];
   selectedCountry: CountryDto | null;
-  languages: LanguageDto[];
-  languagesLoading: boolean;
-  languagesError: string | null;
-  // Country stats state
-  countryStats: CountryStats[];
-  countryStatsLoading: boolean;
-  countryStatsError: string | null;
-  countryStatsPagination: PaginationState;
+}
+
+export interface CountryStatsState extends LoadingState {
+  data: CountryStats[];
+  pagination: PaginationState;
+}
+
+export interface CountriesState {
+  countriesList: CountriesListState;
+  countryLanguages: CountryLanguagesState;
+  countryStats: CountryStatsState;
+  managementInfo: ManagementInfoState;
+  countryStatsOverview: CountryStatsOverviewState;
 }
 
 export const initialCountriesState: CountriesState = {
-  countries: [],
-  loading: false,
-  error: null,
-  pagination: {
-    currentPage: 0,
-    pageSize: 5,
-    totalElements: 0,
-    totalPages: 0,
+  countriesList: {
+    data: [],
+    loading: false,
+    error: null,
+    pagination: {
+      currentPage: 0,
+      pageSize: 5,
+      totalElements: 0,
+      totalPages: 0,
+    },
+    filters: {},
   },
-  filters: {},
-  selectedCountry: null,
-  languages: [],
-  languagesLoading: false,
-  languagesError: null,
-  // Initialize country stats state
-  countryStats: [],
-  countryStatsLoading: false,
-  countryStatsError: null,
-  countryStatsPagination: {
-    currentPage: 0,
-    pageSize: 20,
-    totalElements: 0,
-    totalPages: 0,
+  countryLanguages: {
+    data: [],
+    loading: false,
+    error: null,
+    selectedCountry: null,
+  },
+  countryStats: {
+    data: [],
+    loading: false,
+    error: null,
+    pagination: {
+      currentPage: 0,
+      pageSize: 5,
+      totalElements: 0,
+      totalPages: 0,
+    },
+  },
+  countryStatsOverview: {
+    data: [],
+    loading: false,
+    error: null,
+    pagination: {
+      currentPage: 0,
+      pageSize: 5,
+      totalElements: 0,
+      totalPages: 0,
+    },
+    filters: {},
+  },
+  managementInfo: {
+    regions: [],
+    yearRange: null,
+    loading: false,
+    error: null,
   },
 };
 

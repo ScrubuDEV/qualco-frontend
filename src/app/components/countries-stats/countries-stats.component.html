@@ -1,4 +1,3 @@
-<!-- Countries Stats Page -->
 <div class="min-h-screen bg-gray-50 py-8" *ngIf="viewModel$ | async as vm">
   <div class="max-w-7xl mx-auto px-4">
     <div class="text-3xl font-bold text-gray-900 mb-8 text-center">
@@ -15,7 +14,6 @@
         </p>
       </div>
 
-      <!-- Loading State -->
       <div *ngIf="vm.loading" class="flex justify-center items-center py-20">
         <div
           class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"
@@ -25,7 +23,6 @@
         }}</span>
       </div>
 
-      <!-- Error State -->
       <div *ngIf="vm.hasError && !vm.loading" class="p-8 text-center">
         <div class="text-red-600 mb-4 text-lg">
           {{ vm.error || "NATIONS-error.unknown" | translate }}
@@ -38,9 +35,8 @@
         </button>
       </div>
 
-      <!-- Data Table -->
       <div
-        *ngIf="!vm.loading && !vm.hasError && vm.hasStats"
+        *ngIf="!vm.loading && !vm.hasError && vm.hasItems"
         class="overflow-x-auto"
       >
         <table class="min-w-full divide-y divide-gray-200">
@@ -80,7 +76,7 @@
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <tr
-              *ngFor="let country of vm.countryStats; let i = index"
+              *ngFor="let country of vm.items; let i = index"
               class="hover:bg-gray-50 transition-colors"
             >
               <td class="px-6 py-4 whitespace-nowrap">
@@ -116,17 +112,21 @@
         </table>
       </div>
 
-      <!-- Empty State -->
       <div
-        *ngIf="!vm.loading && !vm.hasError && !vm.hasStats"
+        *ngIf="!vm.loading && !vm.hasError && !vm.hasItems"
         class="p-8 text-center text-gray-500"
       >
         {{ "NATIONS-countries.stats.noData" | translate }}
       </div>
 
-      <!-- Pagination -->
       <div
-        *ngIf="!vm.loading && !vm.hasError && vm.hasStats"
+        *ngIf="
+          !vm.loading &&
+          !vm.hasError &&
+          vm.hasItems &&
+          vm.paginationConfig &&
+          vm.itemCount > 0
+        "
         class="border-t border-gray-200 p-4"
       >
         <app-pagination

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Store, Action } from '@ngrx/store';
+import type { Selector } from '@ngrx/store';
+import { map, Observable } from 'rxjs';
 
 export interface PaginationHelperConfig<T> {
-  selector: any;
+  selector: Selector<object, any>;
   actions: {
-    setPage: (page: number) => any;
-    setPageSize: (size: number) => any;
+    setPage: (page: number) => Action;
+    setPageSize: (size: number) => Action;
   };
 }
 
@@ -17,21 +17,27 @@ export interface PaginationHelperConfig<T> {
 export class PaginationService {
   constructor(private store: Store) {}
 
-  createPaginationHelper<T>(config: PaginationHelperConfig<T>) {
+  createPaginationHelper<T>(config: PaginationHelperConfig<T>): {
+    paginationConfig$: Observable<any>;
+    itemsWithIndex$: Observable<T[]>;
+    totalCount$: Observable<number>;
+    currentPageStartIndex$: Observable<number>;
+    setPage: (page: number) => void;
+    setPageSize: (size: number) => void;
+  } {
     return {
       paginationConfig$: this.store
         .select(config.selector)
-        .pipe(map((viewModel: any) => viewModel?.paginationConfig ?? null)),
+        .pipe(map((viewModel: any) => viewModel?.pagination ?? null)),
 
       itemsWithIndex$: this.store.select(config.selector).pipe(
         map((viewModel: any) => {
-          if (!viewModel?.countries || !viewModel.paginationConfig) {
+          if (!viewModel?.data || !viewModel.pagination) {
             return [];
           }
           const startIndex =
-            viewModel.paginationConfig.pageSize *
-            viewModel.paginationConfig.currentPage;
-          return viewModel.countries.map((item: T, index: number) => ({
+            viewModel.pagination.pageSize * viewModel.pagination.currentPage;
+          return viewModel.data.map((item: T, index: number) => ({
             ...item,
             globalIndex: startIndex + index + 1,
           }));
@@ -41,23 +47,21 @@ export class PaginationService {
       totalCount$: this.store
         .select(config.selector)
         .pipe(
-          map(
-            (viewModel: any) => viewModel?.paginationConfig?.totalElements ?? 0,
-          ),
+          map((viewModel: any) => viewModel?.pagination?.totalElements ?? 0),
         ),
 
       currentPageStartIndex$: this.store.select(config.selector).pipe(
         map((viewModel: any) => {
-          const config = viewModel?.paginationConfig;
+          const config = viewModel?.pagination;
           return config ? config.pageSize * config.currentPage : 0;
         }),
       ),
 
-      setPage: (page: number) => {
+      setPage: (page: number): void => {
         this.store.dispatch(config.actions.setPage(page));
       },
 
-      setPageSize: (size: number) => {
+      setPageSize: (size: number): void => {
         this.store.dispatch(config.actions.setPageSize(size));
       },
     };

@@ -14,13 +14,11 @@ export class App implements OnInit {
 
   private translate = inject(TranslateService);
 
-
   constructor() {
     this.translate.setFallbackLang('en');
     this.translate.use('en');
   }
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   switchLanguage(lang: string): void {
     this.translate.use(lang);

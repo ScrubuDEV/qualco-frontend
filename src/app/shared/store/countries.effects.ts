@@ -10,6 +10,7 @@ import {
   selectCountriesFilters,
   selectCountryStatsPageSize,
 } from './countries.selectors';
+import * as CountriesSelectors from './countries.selectors';
 
 @Injectable()
 export class CountriesEffects {
@@ -48,11 +49,6 @@ export class CountriesEffects {
   setCurrentPage$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CountriesActions.SET_CURRENT_PAGE),
-      tap(() =>
-        console.log(
-          CountriesActions.ACTION_LOG_MESSAGES.SET_CURRENT_PAGE_START,
-        ),
-      ),
       withLatestFrom(
         this.store.select(selectPageSize),
         this.store.select(selectCountriesFilters),
@@ -68,13 +64,9 @@ export class CountriesEffects {
     ),
   );
 
-  // Reload countries when page size changes
   setPageSize$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CountriesActions.SET_PAGE_SIZE),
-      tap(() =>
-        console.log(CountriesActions.ACTION_LOG_MESSAGES.SET_PAGE_SIZE_START),
-      ),
       withLatestFrom(this.store.select(selectCountriesFilters)),
       map(
         ([action, filters]) =>
@@ -87,15 +79,9 @@ export class CountriesEffects {
     ),
   );
 
-  // Initialize pagination and load countries
   initializePagination$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CountriesActions.INITIALIZE_PAGINATION),
-      tap(() =>
-        console.log(
-          CountriesActions.ACTION_LOG_MESSAGES.INITIALIZE_PAGINATION_START,
-        ),
-      ),
       withLatestFrom(this.store.select(selectCountriesFilters)),
       map(
         ([action, filters]) =>
@@ -108,13 +94,9 @@ export class CountriesEffects {
     ),
   );
 
-  // Reload countries when filters change
   setFilters$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CountriesActions.SET_FILTERS),
-      tap(() =>
-        console.log(CountriesActions.ACTION_LOG_MESSAGES.SET_FILTERS_START),
-      ),
       withLatestFrom(this.store.select(selectPageSize)),
       map(
         ([action, pageSize]) =>
@@ -127,13 +109,9 @@ export class CountriesEffects {
     ),
   );
 
-  // Reload countries when filters are cleared
   clearFilters$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CountriesActions.CLEAR_FILTERS),
-      tap(() =>
-        console.log(CountriesActions.ACTION_LOG_MESSAGES.CLEAR_FILTERS_START),
-      ),
       withLatestFrom(this.store.select(selectPageSize)),
       map(
         ([_, pageSize]) =>
@@ -146,7 +124,6 @@ export class CountriesEffects {
     ),
   );
 
-  // New effect for loading country languages
   loadCountryLanguages$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CountriesActions.LOAD_COUNTRY_LANGUAGES),
@@ -169,7 +146,6 @@ export class CountriesEffects {
     ),
   );
 
-  // Effect for loading country stats
   loadCountryStats$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CountriesActions.LOAD_COUNTRY_STATS),
@@ -177,10 +153,6 @@ export class CountriesEffects {
         this.nationsService
           .getMaxGdpPerPopulationStats(action.payload.page, action.payload.size)
           .pipe(
-            tap((response) => {
-              console.log('Country stats API response:', response);
-              console.log('First country stat:', response.content?.[0]);
-            }),
             map((response) => {
               return new CountriesActions.LoadCountryStatsSuccessAction({
                 response,
@@ -199,15 +171,9 @@ export class CountriesEffects {
     ),
   );
 
-  // Effect for setting country stats page
   setCountryStatsPage$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CountriesActions.SET_COUNTRY_STATS_PAGE),
-      tap(() =>
-        console.log(
-          CountriesActions.ACTION_LOG_MESSAGES.SET_COUNTRY_STATS_PAGE_START,
-        ),
-      ),
       withLatestFrom(this.store.select(selectCountryStatsPageSize)),
       map(
         ([action, pageSize]) =>
@@ -219,16 +185,9 @@ export class CountriesEffects {
     ),
   );
 
-  // Effect for setting country stats page size
   setCountryStatsPageSize$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CountriesActions.SET_COUNTRY_STATS_PAGE_SIZE),
-      tap(() =>
-        console.log(
-          CountriesActions.ACTION_LOG_MESSAGES
-            .SET_COUNTRY_STATS_PAGE_SIZE_START,
-        ),
-      ),
       map(
         (action) =>
           new CountriesActions.LoadCountryStatsAction({
@@ -239,22 +198,146 @@ export class CountriesEffects {
     ),
   );
 
-  // Centralized error handling effect (following your pattern)
+  setCountryStatsOverviewFilters$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CountriesActions.SET_COUNTRY_STATS_OVERVIEW_FILTERS),
+      withLatestFrom(
+        this.store.select(
+          CountriesSelectors.selectCountryStatsOverviewPagination,
+        ),
+      ),
+      map(
+        ([action, pagination]) =>
+          new CountriesActions.LoadCountryStatsOverviewAction({
+            page: 0,
+            size: pagination?.pageSize ?? 20,
+            filters: action.payload.filters,
+          }),
+      ),
+    ),
+  );
+
+  loadRegions$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CountriesActions.LOAD_REGIONS),
+      mergeMap(() =>
+        this.nationsService.getRegions().pipe(
+          map(
+            (regions) =>
+              new CountriesActions.LoadRegionsSuccessAction({ regions }),
+          ),
+          catchError((error) =>
+            of(
+              new CountriesActions.LoadRegionsFailureAction({
+                error: this.getErrorMessage(error),
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  loadYearRange$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CountriesActions.LOAD_YEAR_RANGE),
+      mergeMap(() =>
+        this.nationsService.getYearRange().pipe(
+          map(
+            (yearRange) =>
+              new CountriesActions.LoadYearRangeSuccessAction({ yearRange }),
+          ),
+          catchError((error) =>
+            of(
+              new CountriesActions.LoadYearRangeFailureAction({
+                error: this.getErrorMessage(error),
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
   handleError$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(
           CountriesActions.LOAD_COUNTRIES_FAILURE,
           CountriesActions.LOAD_COUNTRY_LANGUAGES_FAILURE,
-          // Add other failure actions here as they are created
+          CountriesActions.LOAD_COUNTRY_STATS_FAILURE,
         ),
         tap((action: any) => {
           console.error('Error handled by centralized error handler:', action);
-          // You can dispatch to a global error handler action here
-          // return new CoreActions.HandleErrorAction(action.payload);
         }),
       ),
-    { dispatch: false }, // Set to true if you want to dispatch another action
+    { dispatch: false },
+  );
+
+  loadCountryStatsOverview$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CountriesActions.LOAD_COUNTRY_STATS_OVERVIEW),
+      mergeMap((action: CountriesActions.LoadCountryStatsOverviewAction) =>
+        this.nationsService
+          .getCountryStatsOverview(
+            action.payload.page,
+            action.payload.size,
+            action.payload.filters,
+          )
+          .pipe(
+            map(
+              (response) =>
+                new CountriesActions.LoadCountryStatsOverviewSuccessAction({
+                  response,
+                }),
+            ),
+            catchError((error) =>
+              of(
+                new CountriesActions.LoadCountryStatsOverviewFailureAction({
+                  error: this.getErrorMessage(error),
+                }),
+              ),
+            ),
+          ),
+      ),
+    ),
+  );
+
+  setCountryStatsOverviewPage$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CountriesActions.SET_COUNTRY_STATS_OVERVIEW_PAGE),
+      withLatestFrom(
+        this.store.select(
+          CountriesSelectors.selectCountryStatsOverviewPagination,
+        ),
+        this.store.select(CountriesSelectors.selectCountryStatsOverviewFilters),
+      ),
+      map(
+        ([action, pagination, filters]) =>
+          new CountriesActions.LoadCountryStatsOverviewAction({
+            page: action.payload.page,
+            size: pagination?.pageSize ?? 20,
+            filters,
+          }),
+      ),
+    ),
+  );
+
+  setCountryStatsOverviewPageSize$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CountriesActions.SET_COUNTRY_STATS_OVERVIEW_PAGE_SIZE),
+      withLatestFrom(
+        this.store.select(CountriesSelectors.selectCountryStatsOverviewFilters),
+      ),
+      map(
+        ([action, filters]) =>
+          new CountriesActions.LoadCountryStatsOverviewAction({
+            page: 0,
+            size: action.payload.size,
+            filters,
+          }),
+      ),
+    ),
   );
 
   private getErrorMessage(error: any): string {

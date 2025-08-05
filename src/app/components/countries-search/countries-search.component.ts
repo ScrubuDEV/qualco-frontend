@@ -1,12 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NationsService } from '../../shared/services/nations.service';
-import { CountrySearchData } from '../../shared/models/country.models';
+import { Store } from '@ngrx/store';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil, take } from 'rxjs/operators';
+import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
+import * as CountriesActions from '../../shared/store/countries.actions';
 import {
-  PaginationComponent,
-  PaginationConfig,
-} from '../../shared/components/pagination/pagination.component';
+  selectCountryStatsOverviewViewModel,
+  selectRegions,
+  selectYearRange,
+  selectCountryStatsOverviewPagination,
+  selectCountryStatsOverviewFilters,
+  CountryStatsOverviewViewModel,
+} from '../../shared/store/countries.selectors';
+import {
+  RegionDto,
+  CountryStatsOverviewListViewModel,
+  CountryStatsOverviewFilters,
+} from '../../shared/models/country.models';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
@@ -14,148 +26,109 @@ import { TranslatePipe } from '@ngx-translate/core';
   standalone: true,
   imports: [CommonModule, FormsModule, PaginationComponent, TranslatePipe],
   templateUrl: './countries-search.component.html',
-  styleUrl: './countries-search.component.scss',
+  styleUrls: ['./countries-search.component.scss'],
 })
-export class CountriesSearchComponent implements OnInit {
-  // Filter properties
-  selectedRegion: string = '';
-  yearFrom: number | null = null;
-  yearTo: number | null = null;
+export class CountriesSearchComponent implements OnInit, OnDestroy {
+  viewModel$: Observable<CountryStatsOverviewViewModel>;
 
-  // Available regions for dropdown
-  regions: string[] = [];
+  regions$: Observable<RegionDto[]>;
+  yearRange$: Observable<{ minYear: number; maxYear: number } | null>;
 
-  // Data and pagination
-  countriesData: CountrySearchData[] = [];
-  loading = false;
-  error: string | null = null;
-
-  // Pagination configuration
-  paginationConfig: PaginationConfig = {
-    currentPage: 0,
-    totalPages: 0,
-    totalElements: 0,
-    pageSize: 10,
-    showFirstLast: true,
-    showPrevNext: true,
-    maxVisiblePages: 5,
+  filters: {
+    region: string;
+    yearFrom: string;
+    yearTo: string;
+  } = {
+    region: '',
+    yearFrom: '',
+    yearTo: '',
   };
 
-  constructor(private nationsService: NationsService) {}
+  private destroy$ = new Subject<void>();
 
-  ngOnInit() {
-    this.loadRegions();
-    this.loadCountriesData();
+  constructor(private store: Store) {
+    this.viewModel$ = this.store.select(selectCountryStatsOverviewViewModel);
+    this.regions$ = this.store.select(selectRegions);
+    this.yearRange$ = this.store.select(selectYearRange);
   }
 
-  loadRegions() {
-    // For now, use hardcoded regions since getRegions might not exist
-    this.regions = [
-      'North America',
-      'South America',
-      'Europe',
-      'Asia',
-      'Africa',
-      'Oceania',
-    ];
+  ngOnInit(): void {
+    this.store.dispatch(CountriesActions.loadRegions());
+    this.store.dispatch(CountriesActions.loadYearRange());
+
+    this.yearRange$.pipe(take(2), takeUntil(this.destroy$)).subscribe((yr) => {
+      if (yr && yr.minYear && yr.maxYear) {
+        this.filters.yearFrom = yr.minYear.toString();
+        this.filters.yearTo = yr.maxYear.toString();
+      }
+    });
+
+    this.store
+      .select(selectCountryStatsOverviewPagination)
+      .pipe(take(1), takeUntil(this.destroy$))
+      .subscribe((paginationState) => {
+        this.store.dispatch(
+          CountriesActions.loadCountryStatsOverview({
+            page: paginationState?.currentPage ?? 0,
+            size: paginationState?.pageSize ?? 20,
+          }),
+        );
+      });
   }
 
-  loadCountriesData() {
-    this.loading = true;
-    this.error = null;
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
-    const filters = {
-      region: this.selectedRegion || undefined,
-      yearFrom: this.yearFrom || undefined,
-      yearTo: this.yearTo || undefined,
-      page: this.paginationConfig.currentPage,
-      size: this.paginationConfig.pageSize,
-    };
+  onPageChange(page: number): void {
+    this.store.dispatch(CountriesActions.setCountryStatsOverviewPage({ page }));
+  }
 
-    // For now, simulate the API call since the method might not exist
-    setTimeout(() => {
-      // Mock data for demonstration
-      const mockData: CountrySearchData[] = [
-        {
-          continentName: 'Europe',
-          regionName: 'Western Europe',
-          countryName: 'France',
-          year: 2023,
-          population: 67000000,
-          gdp: 2800,
+  onPageSizeChange(size: number): void {
+    this.store.dispatch(
+      CountriesActions.setCountryStatsOverviewPageSize({ size }),
+    );
+  }
+
+  onFilterChange(regions: RegionDto[]): void {
+    let regionId: number | undefined = undefined;
+    if (this.filters.region) {
+      const regionObj = regions.find(
+        (r: RegionDto) => r.id.toString() === this.filters.region,
+      );
+      if (regionObj) {
+        regionId = regionObj.id;
+      }
+    }
+    this.store.dispatch(
+      CountriesActions.setCountryStatsOverviewFilters({
+        filters: {
+          regionId,
+          yearFrom: this.filters.yearFrom || undefined,
+          yearTo: this.filters.yearTo || undefined,
         },
-        {
-          continentName: 'Europe',
-          regionName: 'Western Europe',
-          countryName: 'Germany',
-          year: 2023,
-          population: 83000000,
-          gdp: 4200,
-        },
-        {
-          continentName: 'Asia',
-          regionName: 'Eastern Asia',
-          countryName: 'Japan',
-          year: 2023,
-          population: 125000000,
-          gdp: 4900,
-        },
-        {
-          continentName: 'North America',
-          regionName: 'Northern America',
-          countryName: 'United States',
-          year: 2023,
-          population: 331000000,
-          gdp: 23300,
-        },
-        {
-          continentName: 'Asia',
-          regionName: 'Southern Asia',
-          countryName: 'India',
-          year: 2023,
-          population: 1380000000,
-          gdp: 3400,
-        },
-      ];
-
-      this.countriesData = mockData;
-      this.paginationConfig = {
-        ...this.paginationConfig,
-        totalPages: Math.ceil(mockData.length / this.paginationConfig.pageSize),
-        totalElements: mockData.length,
-      };
-      this.loading = false;
-    }, 1000);
+      }),
+    );
   }
 
-  applyFilters() {
-    this.paginationConfig = { ...this.paginationConfig, currentPage: 0 };
-    this.loadCountriesData();
-  }
-
-  clearFilters() {
-    this.selectedRegion = '';
-    this.yearFrom = null;
-    this.yearTo = null;
-    this.paginationConfig = { ...this.paginationConfig, currentPage: 0 };
-    this.loadCountriesData();
-  }
-
-  onPageChange(page: number) {
-    this.paginationConfig = { ...this.paginationConfig, currentPage: page };
-    this.loadCountriesData();
-  }
-
-  onPageSizeChange(pageSize: number) {
-    this.paginationConfig = {
-      ...this.paginationConfig,
-      pageSize: pageSize,
-      currentPage: 0,
-    };
-    this.loadCountriesData();
-  }
-
-  get paginatedData(): CountrySearchData[] {
-    return this.countriesData;
+  onSort(
+    column: SORT_STRING,
+    direction: SORT_DIRECTION,
+  ): void {
+    this.store
+      .select(selectCountryStatsOverviewFilters)
+      .pipe(take(1))
+      .subscribe((filters: CountryStatsOverviewFilters) => {
+        this.store.dispatch(
+          CountriesActions.setCountryStatsOverviewFilters({
+            filters: {
+              ...filters,
+              sortBy: column,
+              direction,
+            },
+          }),
+        );
+      });
   }
 }

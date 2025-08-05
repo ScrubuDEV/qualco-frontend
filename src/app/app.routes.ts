@@ -8,9 +8,13 @@ import { CountriesSearchComponent } from './components/countries-search/countrie
 export const routes: Routes = [
   { path: '', component: NationsHomepageComponent },
   { path: 'countries', component: CountriesListComponent },
-  { path: 'countries/:code/languages', component: CountryLanguagesComponent },
+  {
+    path: 'countries/:code/languages',
+    component: CountryLanguagesComponent,
+    outlet: 'popup',
+  },
   { path: 'countries-stats', component: CountriesStatsComponent },
   { path: 'countries-search', component: CountriesSearchComponent },
-  { path: 'about', redirectTo: '', pathMatch: 'full' }, // Temporary redirect
-  { path: '**', redirectTo: '' }, // Wildcard route for 404 page
+  { path: 'about', redirectTo: '', pathMatch: 'full' },
+  { path: '**', redirectTo: '' },
 ];

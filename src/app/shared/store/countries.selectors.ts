@@ -4,22 +4,30 @@ import {
   CountryDto,
   LanguageDto,
   CountryStats,
+  RegionDto,
+  CountryStatsOverviewDto,
 } from '../models/country.models';
 import { PaginationConfig } from '../components/pagination/pagination.component';
 
-// View model interface for the countries list component
-export interface CountriesListViewModel {
-  countries: CountryDto[];
+export interface CountryStatsOverviewViewModel
+  extends PaginatedListViewModel<CountryStatsOverviewDto> {
+  sortBy?: string;
+  direction?: 'asc' | 'desc';
+}
+
+export interface PaginatedListViewModel<T> {
+  items: T[];
   loading: boolean;
   error: string | null;
-  hasCountries: boolean;
-  countryCount: number;
+  hasItems: boolean;
+  itemCount: number;
   hasError: boolean;
   isReady: boolean;
   paginationConfig: PaginationConfig;
 }
 
-// New view model for country languages component
+export type CountriesListViewModel = PaginatedListViewModel<CountryDto>;
+
 export interface CountryLanguagesViewModel {
   selectedCountry: CountryDto | null;
   languages: LanguageDto[];
@@ -31,39 +39,29 @@ export interface CountryLanguagesViewModel {
   isReady: boolean;
 }
 
-// View model interface for country stats component
-export interface CountryStatsViewModel {
-  countryStats: CountryStats[];
-  loading: boolean;
-  error: string | null;
-  hasStats: boolean;
-  statsCount: number;
-  hasError: boolean;
-  isReady: boolean;
-  paginationConfig: PaginationConfig;
-}
+export type CountryStatsViewModel = PaginatedListViewModel<CountryStats>;
 
 export const selectCountriesFeature =
   createFeatureSelector<CountriesState>('countries');
 
 export const selectCountries = createSelector(
   selectCountriesFeature,
-  (state: CountriesState) => state.countries,
+  (state: CountriesState) => state.countriesList.data,
 );
 
 export const selectCountriesLoading = createSelector(
   selectCountriesFeature,
-  (state: CountriesState) => state.loading,
+  (state: CountriesState) => state.countriesList.loading,
 );
 
 export const selectCountriesError = createSelector(
   selectCountriesFeature,
-  (state: CountriesState) => state.error,
+  (state: CountriesState) => state.countriesList.error,
 );
 
 export const selectCountriesPagination = createSelector(
   selectCountriesFeature,
-  (state: CountriesState) => state.pagination,
+  (state: CountriesState) => state.countriesList.pagination,
 );
 
 export const selectCurrentPage = createSelector(
@@ -88,7 +86,7 @@ export const selectTotalPages = createSelector(
 
 export const selectCountriesFilters = createSelector(
   selectCountriesFeature,
-  (state: CountriesState) => state.filters,
+  (state: CountriesState) => state.countriesList.filters,
 );
 
 export const selectHasCountries = createSelector(
@@ -144,36 +142,35 @@ export const selectCountriesListViewModel = createSelector(
     isReady,
     paginationConfig,
   ): CountriesListViewModel => ({
-    countries,
+    items: countries,
     loading,
     error,
-    hasCountries,
-    countryCount,
+    hasItems: hasCountries,
+    itemCount: countryCount,
     hasError,
     isReady,
     paginationConfig,
   }),
 );
 
-// New language-related selectors
 export const selectSelectedCountry = createSelector(
   selectCountriesFeature,
-  (state: CountriesState) => state.selectedCountry,
+  (state: CountriesState) => state.countryLanguages.selectedCountry,
 );
 
 export const selectLanguages = createSelector(
   selectCountriesFeature,
-  (state: CountriesState) => state.languages,
+  (state: CountriesState) => state.countryLanguages.data,
 );
 
 export const selectLanguagesLoading = createSelector(
   selectCountriesFeature,
-  (state: CountriesState) => state.languagesLoading,
+  (state: CountriesState) => state.countryLanguages.loading,
 );
 
 export const selectLanguagesError = createSelector(
   selectCountriesFeature,
-  (state: CountriesState) => state.languagesError,
+  (state: CountriesState) => state.countryLanguages.error,
 );
 
 export const selectHasLanguages = createSelector(
@@ -200,22 +197,22 @@ export const selectLanguagesIsReady = createSelector(
 // Country stats selectors
 export const selectCountryStats = createSelector(
   selectCountriesFeature,
-  (state: CountriesState) => state.countryStats,
+  (state: CountriesState) => state.countryStats.data,
 );
 
 export const selectCountryStatsLoading = createSelector(
   selectCountriesFeature,
-  (state: CountriesState) => state.countryStatsLoading,
+  (state: CountriesState) => state.countryStats.loading,
 );
 
 export const selectCountryStatsError = createSelector(
   selectCountriesFeature,
-  (state: CountriesState) => state.countryStatsError,
+  (state: CountriesState) => state.countryStats.error,
 );
 
 export const selectCountryStatsPagination = createSelector(
   selectCountriesFeature,
-  (state: CountriesState) => state.countryStatsPagination,
+  (state: CountriesState) => state.countryStats.pagination,
 );
 
 export const selectCountryStatsCurrentPage = createSelector(
@@ -257,6 +254,41 @@ export const selectCountryStatsIsReady = createSelector(
   selectCountryStatsLoading,
   selectHasCountryStatsError,
   (loading, hasError) => !loading && !hasError,
+);
+
+export const selectManagementInfo = createSelector(
+  selectCountriesFeature,
+  (state: CountriesState) => state.managementInfo,
+);
+
+export const selectRegions = createSelector(
+  selectManagementInfo,
+  (managementInfo) => managementInfo.regions as RegionDto[],
+);
+
+export const selectRegionsLoading = createSelector(
+  selectManagementInfo,
+  (managementInfo) => managementInfo.loading,
+);
+
+export const selectRegionsError = createSelector(
+  selectManagementInfo,
+  (managementInfo) => managementInfo.error,
+);
+
+export const selectYearRange = createSelector(
+  selectManagementInfo,
+  (managementInfo) => managementInfo.yearRange,
+);
+
+export const selectYearRangeLoading = createSelector(
+  selectManagementInfo,
+  (managementInfo) => managementInfo.loading,
+);
+
+export const selectYearRangeError = createSelector(
+  selectManagementInfo,
+  (managementInfo) => managementInfo.error,
 );
 
 export const selectCountryStatsPaginationConfig = createSelector(
@@ -312,22 +344,88 @@ export const selectCountryStatsViewModel = createSelector(
   selectCountryStatsIsReady,
   selectCountryStatsPaginationConfig,
   (
-    countryStats,
+    items,
     loading,
     error,
-    hasStats,
-    statsCount,
+    hasItems,
+    itemCount,
     hasError,
     isReady,
     paginationConfig,
   ): CountryStatsViewModel => ({
-    countryStats,
+    items,
     loading,
     error,
-    hasStats,
-    statsCount,
+    hasItems,
+    itemCount,
     hasError,
     isReady,
     paginationConfig,
+  }),
+);
+
+export const selectCountryStatsOverview = createSelector(
+  selectCountriesFeature,
+  (state) => state.countryStatsOverview.data,
+);
+export const selectCountryStatsOverviewLoading = createSelector(
+  selectCountriesFeature,
+  (state) => state.countryStatsOverview.loading,
+);
+export const selectCountryStatsOverviewError = createSelector(
+  selectCountriesFeature,
+  (state) => state.countryStatsOverview.error,
+);
+export const selectCountryStatsOverviewPagination = createSelector(
+  selectCountriesFeature,
+  (state) => state.countryStatsOverview.pagination,
+);
+export const selectCountryStatsOverviewFilters = createSelector(
+  selectCountriesFeature,
+  (state: CountriesState) => state.countryStatsOverview.filters,
+);
+export const selectCountryStatsOverviewViewModel = createSelector(
+  selectCountryStatsOverview,
+  selectCountryStatsOverviewLoading,
+  selectCountryStatsOverviewError,
+  selectCountryStatsOverviewPagination,
+  selectCountryStatsOverviewFilters, // <-- add this
+  (
+    items,
+    loading,
+    error,
+    pagination,
+    filters,
+  ): CountryStatsOverviewViewModel => ({
+    items,
+    loading,
+    error,
+    hasItems: !!items && items.length > 0,
+    itemCount: items?.length || 0,
+    hasError: !!error,
+    isReady: !loading && !error,
+    paginationConfig: {
+      currentPage: pagination.currentPage,
+      pageSize: pagination.pageSize,
+      totalElements: pagination.totalElements,
+      totalPages: pagination.totalPages,
+      showFirstLast: true,
+      showPrevNext: true,
+      maxVisiblePages: 3,
+    },
+    sortBy: filters?.sortBy, // <-- add this
+    direction: filters?.direction, // <-- add this
+  }),
+);
+export const selectCountryStatsOverviewPaginationConfig = createSelector(
+  selectCountryStatsOverviewPagination,
+  (pagination) => ({
+    currentPage: pagination.currentPage,
+    pageSize: pagination.pageSize,
+    totalElements: pagination.totalElements,
+    totalPages: pagination.totalPages,
+    showFirstLast: true,
+    showPrevNext: true,
+    maxVisiblePages: 3,
   }),
 );

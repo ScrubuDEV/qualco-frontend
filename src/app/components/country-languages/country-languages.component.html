@@ -1,34 +1,56 @@
-<!-- Country Languages Page -->
-<div class="min-h-screen bg-gray-50 py-8">
-  <div class="max-w-4xl mx-auto px-4">
-    <div class="mb-6">
-      <a
-        routerLink="/countries"
-        class="inline-flex items-center text-indigo-600 hover:text-indigo-800 transition-colors"
-      >
-        ← {{ "NATIONS-countryLanguages.backToList" | translate }}
-      </a>
-    </div>
+<div
+  class="fixed inset-0 z-50 overflow-y-auto modal-overlay"
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+    (click)="closeModal()"
+  ></div>
 
-    <div class="text-3xl font-bold text-gray-900 mb-8 text-center">
-      {{ "NATIONS-countryLanguages.languagesSpokenIn" | translate }}
-      {{ countryName$ | async }}
-    </div>
-
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+  <div
+    class="flex items-center justify-center min-h-full p-4 text-center sm:p-0"
+  >
+    <div
+      class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl modal-panel"
+    >
       <div class="px-6 py-4 bg-green-600 text-white">
-        <div class="text-xl font-semibold">
-          {{ "NATIONS-countryLanguages.spokenLanguages" | translate }}
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-xl font-semibold" id="modal-title">
+              {{ "NATIONS-countryLanguages.languagesSpokenIn" | translate }}
+              {{ countryName$ | async }}
+            </h3>
+            <p class="text-green-100 mt-1">
+              {{ "NATIONS-countryLanguages.countryCode" | translate }}:
+              {{ countryCode$ | async }}
+            </p>
+          </div>
+          <button
+            (click)="closeModal()"
+            class="text-green-200 hover:text-white transition-colors"
+            aria-label="Close modal"
+          >
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
-        <p class="text-green-100 mt-1">
-          {{ "NATIONS-countryLanguages.countryCode" | translate }}:
-          {{ countryCode$ | async }}
-        </p>
       </div>
 
-      <div class="p-6">
-        <!-- Loading state -->
-        <div *ngIf="loading$ | async" class="text-center py-4">
+      <div class="px-6 py-4 max-h-96 overflow-y-auto modal-content">
+        <div *ngIf="loading$ | async" class="text-center py-8">
           <div
             class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"
           ></div>
@@ -37,28 +59,25 @@
           </p>
         </div>
 
-        <!-- Error state -->
         <div
           *ngIf="(error$ | async) && !(loading$ | async)"
-          class="text-center py-4"
+          class="text-center py-8"
         >
           <p class="text-red-600">{{ error$ | async }}</p>
         </div>
 
-        <!-- Empty state -->
         <ng-container *ngIf="languages$ | async as languages">
           <div
             *ngIf="
               languages.length === 0 && !(loading$ | async) && !(error$ | async)
             "
-            class="text-center py-4"
+            class="text-center py-8"
           >
             <p class="text-gray-600">
               {{ "NATIONS-countryLanguages.noLanguagesFound" | translate }}
             </p>
           </div>
 
-          <!-- Languages list -->
           <div class="grid gap-4" *ngIf="languages.length > 0">
             <div
               *ngFor="let language of languages"
@@ -84,6 +103,17 @@
             </div>
           </div>
         </ng-container>
+      </div>
+
+      <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+        <div class="flex justify-end">
+          <button
+            (click)="closeModal()"
+            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            {{ "NATIONS-countryLanguages.backToList" | translate }}
+          </button>
+        </div>
       </div>
     </div>
   </div>

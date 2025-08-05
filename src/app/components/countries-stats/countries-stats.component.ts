@@ -25,18 +25,15 @@ import { TranslatePipe } from '@ngx-translate/core';
   styleUrl: './countries-stats.component.scss',
 })
 export class CountriesStatsComponent implements OnInit, OnDestroy {
-  // Observable for the view model that combines all state we need
   viewModel$: Observable<CountryStatsViewModel>;
 
   private destroy$ = new Subject<void>();
 
   constructor(private store: Store) {
-    // Initialize the view model selector
     this.viewModel$ = this.store.select(selectCountryStatsViewModel);
   }
 
   ngOnInit() {
-    // Get initial page and size from the store
     const page$ = this.store.select(selectCountryStatsCurrentPage);
     const pageSize$ = this.store.select(selectCountryStatsPageSize);
 
@@ -62,12 +59,10 @@ export class CountriesStatsComponent implements OnInit, OnDestroy {
   }
 
   onPageChange(page: number): void {
-    // Dispatch action to update the page
     this.store.dispatch(CountriesActions.setCountryStatsPage({ page }));
   }
 
   onPageSizeChange(size: number): void {
-    // Dispatch action to update the page size
     this.store.dispatch(CountriesActions.setCountryStatsPageSize({ size }));
   }
 }

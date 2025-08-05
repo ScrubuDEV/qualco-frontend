@@ -10,8 +10,5 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
   styleUrl: './nations-homepage.component.scss',
 })
 export class NationsHomepageComponent {
-
-  constructor(translate: TranslateService) {
-
-  }
+  constructor(translate: TranslateService) {}
 }

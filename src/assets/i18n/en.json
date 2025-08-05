@@ -52,6 +52,9 @@
   "NATIONS-error.server": "Server error. Please try again later.",
   "NATIONS-error.forbidden": "Access denied. Please check your permissions.",
   "NATIONS-error.unknown": "Failed to load countries: Unknown error",
+  "NATIONS-pagination.page": "Page",
+  "NATIONS-pagination.previous.short": "Previous Page",
+  "NATIONS-pagination.next.short": "Next Page",
   "NATIONS-pagination.showing": "Showing",
   "NATIONS-pagination.to": "to",
   "NATIONS-pagination.of": "of",
@@ -75,5 +78,13 @@
   "NATIONS-countryLanguages.countryCode": "Country Code",
   "NATIONS-countryLanguages.loading": "Loading languages...",
   "NATIONS-countryLanguages.noLanguagesFound": "No languages found for this country.",
-  "NATIONS-countryLanguages.official": "Official"
+  "NATIONS-countryLanguages.official": "Official",
+  "NATIONS-table.continentName": "Continent",
+  "NATIONS-table.regionName": "Region",
+  "NATIONS-table.country": "Country",
+  "NATIONS-table.noData": "No data found.",
+  "NATIONS-table.searchFilters": "Search Filters",
+  "NATIONS-table.filterByRegionYear": "Filter by region and year range to find country statistics.",
+  "NATIONS-filter.yearFrom": "Year From",
+  "NATIONS-filter.yearTo": "Year To"
 }

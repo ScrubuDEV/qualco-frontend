@@ -1,59 +1,110 @@
 # NationsFrontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.4.
+A modern Angular application for exploring countries, their statistics, and spoken languages, with full internationalization (i18n) support.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- **Angular Standalone Components**: Modular UI with standalone components for each feature.
+- **NgRx State Management**: Robust state handling using actions, reducers, selectors, and effects.
+- **Internationalization**: Supports English and French via [ngx-translate](https://github.com/ngx-translate/core). All UI text is translatable.
+- **Tailwind CSS**: Utility-first styling for rapid UI development.
+- **API Integration**: All backend communication via `NationsService`.
+- **Pagination & Filtering**: Advanced table filtering and pagination.
+- **Popup Modals**: Uses Angular named outlets for modal dialogs.
+- **Responsive Design**: Fully responsive layout.
 
-```bash
-ng serve
+## Project Structure
+
+```
+src/
+  app/
+    components/
+      countries-list/
+      countries-search/
+      countries-stats/
+      country-languages/
+      nations-homepage/
+    shared/
+      components/
+      constants/
+      models/
+      services/
+      store/
+    pipes/
+    app.routes.ts
+    app.config.ts
+  assets/
+    i18n/
+      en.json
+      fr.json
+  styles.css
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Developer Workflows
 
-## Code scaffolding
+- **Start Dev Server**:
+  ```bash
+  ng serve
+  ```
+- **Run Unit Tests**:
+  ```bash
+  ng test
+  ```
+- **Build for Production**:
+  ```bash
+  ng build
+  ```
+- **Generate Component**:
+  ```bash
+  ng generate component <name>
+  ```
+- **Lint/Format**:  
+  Uses `.prettierrc` and `.editorconfig` (2 spaces, single quotes for TS).
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Internationalization (i18n)
 
-```bash
-ng generate component component-name
-```
+- All user-facing text must be present in both `en.json` and `fr.json` (`src/assets/i18n/`).
+- To add a new translation key, update both files.  
+  Example:
+  ```json
+  // en.json
+  "NATIONS-table.population": "Population",
+  // fr.json
+  "NATIONS-table.population": "Population",
+  ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## API Integration
 
-```bash
-ng generate --help
-```
+- All backend calls are handled by `NationsService` (`src/app/shared/services/nations.service.ts`).
+- API base URL is configured in `src/app/shared/constants/config.constants.ts`.
 
-## Building
+## State Management
 
-To build the project run:
+- Store logic is in `src/app/shared/store/`.
+- Use selectors for view models, not just raw state.
+- Effects handle API calls and centralized error handling.
 
-```bash
-ng build
-```
+## Styling
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- Tailwind CSS is configured via `tailwind.config.js` and `postcss.config.js`.
+- Global styles in `src/styles.css`.
 
-## Running unit tests
+## Routing
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+- Routes are defined in `src/app/app.routes.ts`.
+- Named outlets are used for popup modals.
 
-```bash
-ng test
-```
+## Contributing
 
-## Running end-to-end tests
+1. Fork the repo and create your branch.
+2. Add or update translations in both `en.json` and `fr.json`.
+3. Follow the component and state management patterns.
+4. Run tests before submitting a PR.
 
-For end-to-end (e2e) testing, run:
+## License
 
-```bash
-ng e2e
-```
+MIT
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+---
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+For more details, see the code comments and [`.github/copilot-instructions.md`](.github/copilot-instructions.md).

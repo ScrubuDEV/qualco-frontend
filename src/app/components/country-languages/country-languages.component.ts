@@ -1,11 +1,20 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { CountryDto, LanguageDto } from '../../shared/models/country.models';
-import { Observable, Subject, takeUntil, map, BehaviorSubject, catchError, combineLatest, filter, of, switchMap, tap } from 'rxjs';
-import * as CountriesActions from '../../shared/store/countries.actions';
-import * as fromCountries from '../../shared/store/countries.selectors';
+import { LanguageDto } from '../../shared/models/country.models';
+import {
+  Observable,
+  Subject,
+  takeUntil,
+  map,
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  filter,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { NationsService } from '../../shared/services/nations.service';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -68,7 +77,9 @@ export class CountryLanguagesComponent implements OnInit, OnDestroy {
     );
 
     this.countryName$ = combineLatest([this.country$, this.countryCode$]).pipe(
-      map(([country, code]) => country?.countryName || code || 'Unknown Country'),
+      map(
+        ([country, code]) => country?.countryName || code || 'Unknown Country',
+      ),
     );
 
     const navigation = this.router.getCurrentNavigation();
@@ -77,9 +88,11 @@ export class CountryLanguagesComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnInit() {
-    window.scrollTo(0, 0);
+  closeModal(): void {
+    this.router.navigate([{ outlets: { popup: null } }]);
+  }
 
+  ngOnInit() {
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const code = params.get('code');
       this.countryCodeSubject.next(code);
